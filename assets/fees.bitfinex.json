@@ -1,0 +1,13 @@
+//https://www.bitfinex.com/fees
+{
+    "orderExecution": {
+        "makerFees": "0,1%",
+        "takerFees": "0,2%"
+    },
+    "withdrawal": {
+        "BTC": 0.0004,
+        "LTC": 0.001,
+        "ETH": 0.00135,
+        "EOS": 0
+    }
+}
