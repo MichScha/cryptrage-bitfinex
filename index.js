@@ -10,11 +10,15 @@ let initial = {
     eth: { from: "ETH", to: [] }
 }
 
+let basicOrderBooks = {
+}
+
 let circuits = [["ETH", "X", "BTC"]]
 
 getPairs()
 
 function test() {
+    //console.log(initial.btc.to)
     initial.eth.to.forEach(element => {
         if (initial.btc.to.includes(element)) {
             //console.log("ETH --> " + element + "-->BTC")
@@ -23,10 +27,13 @@ function test() {
     initial.usd.to.forEach(element => {
         if (initial.btc.to.includes(element)) {
             //console.log("USD --> " + element + "-->BTC")
+            if(element == 'MNA' || element == 'EOS'){
+                console.log(element)
+
             calculate('t' + element + 'USD').then(res1 => {
                 let buyerE1 = []
-                console.log("t" + element + 'USD')
-                console.log("res1: " + res1.length)
+/*              console.log("t" + element + 'USD')
+                console.log("res1: " + res1.length) */
                 res1.forEach(element => {
                     if (element[2] > 0) {
                         buyerE1.push(element)
@@ -34,8 +41,8 @@ function test() {
                 })
                 calculate('t' + element + 'BTC').then(res2 => {
                     let sellerE2 = []
-                    console.log("t" + element + 'BTC')
-                    console.log("res2: " + res2.length)
+/*                     console.log("t" + element + 'BTC')
+                    console.log("res2: " + res2.length) */
                     res2.forEach(element => {
                         if (element[2] < 0) {
                             sellerE2.push(element)
@@ -43,18 +50,18 @@ function test() {
                     })
                     calculate('tBTCUSD').then(res3 => {
                         let sellerE3 = []
-                        console.log("tBTCUSD")
-                        console.log("res3: " + res3.length)
+/*                         console.log("tBTCUSD")
+                        console.log("res3: " + res3.length) */
                         res3.forEach(element => {
                             if (element[2] < 0) {
                                 sellerE3.push(element)
                             }
                         })
                         console.log("####### Pair: USD->" + element + "->BTC->USD #######")
-                        console.log("buyerE1: " + buyerE1[0][0])
-                        console.log("sellerE2: " + sellerE2[0][0])
-                        console.log("sellerE3: " + sellerE3[0][0])
-                        console.log((100 / buyerE1[0][0]) * sellerE2[0][0] * sellerE3[0][0])
+                        console.log("buyerE1: " + toFixed(buyerE1[0][0]))
+                        console.log("sellerE2: " + toFixed(sellerE2[0][0]))
+                        console.log("sellerE3: " + toFixed(sellerE3[0][0]))
+                        console.log((100 / toFixed(buyerE1[0][0])) * toFixed(sellerE2[0][0]) * toFixed(sellerE3[0][0]))
                         console.log("Fees: " + (100 * 3 * 0.002))
                         console.log("############################")
                     })
@@ -63,13 +70,13 @@ function test() {
                         })
                 })
                     .catch(err => {
-                        console.log(err)
+                        console.log(err + "ELement: " + element)
                     })
             })
                 .catch(err => {
-                    console.log(err)
+                    console.log(err + "ELement: " + element)
                 })
-
+            }
         }
         if (initial.eth.to.includes(element)) {
             //console.log("USD --> " + element + "-->ETH")
@@ -78,7 +85,8 @@ function test() {
     initial.eur.to.forEach(element => {
         if (initial.btc.to.includes(element)) {
             //console.log("EUR --> " + element + "-->BTC")
-            /*calculate('t' + element + 'EUR').then(res1 =>{
+            /*
+            calculate('t' + element + 'EUR').then(res1 =>{
                 let buyerE1 = []
                 res1.forEach(element => {
                     if(element[2] > 0){
@@ -100,10 +108,10 @@ function test() {
                             }
                         })
                         console.log("####### Pair: EUR->" + element + "->BTC->EUR #######")
-                        console.log("buyerE1: " + buyerE1[0][0])
-                        console.log("sellerE2: " + sellerE2[0][0])
-                        console.log("sellerE3: " + sellerE3[0][0])
-                        console.log((100 / buyerE1[0][0]) * sellerE2[0][0] * sellerE3[0][0])
+                        console.log("buyerE1: " + toFixed(buyerE1[0][0]))
+                        console.log("sellerE2: " + toFixed(sellerE2[0][0]))
+                        console.log("sellerE3: " + toFixed(sellerE3[0][0]))
+                        console.log((100 / toFixed(buyerE1[0][0])) * toFixed(sellerE2[0][0]) * toFixed(sellerE3[0][0]))
                         console.log("Fees: " + (100*3*0.002))
                         console.log("############################")
                     })
@@ -170,18 +178,31 @@ function test() {
 }
 
 async function calculate(e1) {
-    let precision = 'P0'
-    let queryParams = ''
-    try {
-        console.log("PairRequest: " + e1)
-        let pathParamsE1 = 'book/' + e1 + "/" + precision
-        let reqE1 = await fetch(`${url}/${pathParamsE1}`)
-        let res = await reqE1.json()
-        return res
+    console.log(Object.keys(basicOrderBooks))
+    if(!basicOrderBooks[''+e1+'']){
+        //console.log("XXX")
+        //console.log(basicOrderBooks.tBTCUSD)
+        let precision = 'P0'
+        let queryParams = ''
+        try {
+            let pathParamsE1 = 'book/' + e1 + "/" + precision
+            let reqE1 = await fetch(`${url}/${pathParamsE1}`)
+            let res = await reqE1.json()
+
+            basicOrderBooks[e1] = res
+            console.log("PairRequest: " + e1)
+            
+            return res
+        }
+        catch (err) {
+            console.log(err)
+        }
+    } else {
+        console.log("999999999999999999999999999999999999999999")
+        return basicOrderBooks[e1]
     }
-    catch (err) {
-        console.log(err)
-    }
+
+
 }
 
 function findStartingCircuits() {
@@ -230,7 +251,7 @@ async function getPairs() {
             }
         });
         findStartingCircuits()
-        //test()
+        test()
     }
     catch (err) {
         console.log(err)
@@ -254,8 +275,8 @@ let tickers = {
 
 // Request current orderbooks
 Object.keys(tickers).forEach(element => {
-    request(element)
-    console.log(element)
+    //request(element)
+    //console.log(element)
 });
 
 async function request(element) {
