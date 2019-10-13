@@ -15,6 +15,15 @@ let basicOrderBooks = {
 
 let circuits = [["ETH", "X", "BTC"]]
 
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+      if ((new Date().getTime() - start) > milliseconds){
+        break;
+      }
+    }
+  }
+
 getPairs()
 
 function test() {
@@ -27,43 +36,48 @@ function test() {
     initial.usd.to.forEach(element => {
         if (initial.btc.to.includes(element)) {
             //console.log("USD --> " + element + "-->BTC")
-            if(element == 'MNA' || element == 'EOS'){
-                console.log(element)
+            if(false){
+               // console.log(element)
 
             calculate('t' + element + 'USD').then(res1 => {
-                let buyerE1 = []
-/*              console.log("t" + element + 'USD')
-                console.log("res1: " + res1.length) */
+                let sellerE1 = []
+              console.log("t" + element + 'USD')
+                console.log("res1: " + res1.length)
                 res1.forEach(element => {
-                    if (element[2] > 0) {
-                        buyerE1.push(element)
+                    if (element[2] < 0) {
+                        sellerE1.push(element)
                     }
                 })
+                sleep(1001);
                 calculate('t' + element + 'BTC').then(res2 => {
-                    let sellerE2 = []
+                    
+                    let buyerE2 = []
 /*                     console.log("t" + element + 'BTC')
                     console.log("res2: " + res2.length) */
                     res2.forEach(element => {
-                        if (element[2] < 0) {
-                            sellerE2.push(element)
+                        if (element[2] > 0) {
+                            buyerE2.push(element)
                         }
                     })
+                    sleep(1001);
                     calculate('tBTCUSD').then(res3 => {
-                        let sellerE3 = []
+                        let buyerE3 = []
 /*                         console.log("tBTCUSD")
                         console.log("res3: " + res3.length) */
                         res3.forEach(element => {
-                            if (element[2] < 0) {
-                                sellerE3.push(element)
+                            if (element[2] > 0) {
+                                buyerE3.push(element)
                             }
                         })
+                        
                         console.log("####### Pair: USD->" + element + "->BTC->USD #######")
-                        console.log("buyerE1: " + toFixed(buyerE1[0][0]))
-                        console.log("sellerE2: " + toFixed(sellerE2[0][0]))
-                        console.log("sellerE3: " + toFixed(sellerE3[0][0]))
-                        console.log((100 / toFixed(buyerE1[0][0])) * toFixed(sellerE2[0][0]) * toFixed(sellerE3[0][0]))
+                        console.log("buyerE1: " + toFixed(sellerE1[0][0]))
+                        console.log("sellerE2: " + toFixed(buyerE2[0][0]))
+                        console.log("sellerE3: " + toFixed(buyerE3[0][0]))
+                        console.log((100 / toFixed(sellerE1[0][0])) * toFixed(buyerE2[0][0]) * toFixed(buyerE3[0][0]))
                         console.log("Fees: " + (100 * 3 * 0.002))
                         console.log("############################")
+                        sleep(1001);
                     })
                         .catch(err => {
                             console.log(err)
@@ -85,7 +99,7 @@ function test() {
     initial.eur.to.forEach(element => {
         if (initial.btc.to.includes(element)) {
             //console.log("EUR --> " + element + "-->BTC")
-            /*
+            
             calculate('t' + element + 'EUR').then(res1 =>{
                 let buyerE1 = []
                 res1.forEach(element => {
@@ -93,6 +107,7 @@ function test() {
                         buyerE1.push(element)
                     }
                 })
+                sleep(1001);
                 calculate('t' + element + 'BTC').then(res2 =>{
                     let sellerE2 = []
                     res2.forEach(element => {
@@ -100,6 +115,7 @@ function test() {
                             sellerE2.push(element)
                         }
                     })
+                    sleep(1001);
                     calculate('tBTCEUR').then(res3 =>{
                         let sellerE3 = []
                         res3.forEach(element => {
@@ -114,6 +130,7 @@ function test() {
                         console.log((100 / toFixed(buyerE1[0][0])) * toFixed(sellerE2[0][0]) * toFixed(sellerE3[0][0]))
                         console.log("Fees: " + (100*3*0.002))
                         console.log("############################")
+                        sleep(1001);
                     })
                     .catch(err =>{
                         console.log(err)
@@ -125,7 +142,7 @@ function test() {
             })
             .catch(err =>{
                 console.log(err)
-            })*/
+            })
         }
 
         if (initial.eth.to.includes(element)) {
