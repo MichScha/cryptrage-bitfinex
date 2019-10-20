@@ -2,6 +2,7 @@
 node_modules
 /server/src/uploads
 /dist
+/pairings
 
 # local env files
 .env.local
